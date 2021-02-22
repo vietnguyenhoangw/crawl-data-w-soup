@@ -2,6 +2,7 @@ const http = require("http");
 const sqlite3 = require("sqlite3");
 const Promise = require("bluebird");
 const striptags = require("striptags");
+var _ = require("lodash");
 
 const hostname = "127.0.0.1";
 const port = 3003;
@@ -20,36 +21,53 @@ let db = new sqlite3.Database(
   }
 );
 
-db.all("SELECT word, html_raw FROM vi_word_copy", {},
-  (error, rows) => {
-    if (error) {
-      console.error(error.message);
-    }
+db.all("SELECT word, html_raw FROM vi_word_copy", {}, (error, rows) => {
+  if (error) {
+    console.error(error.message);
+  }
 
-    db.serialize(function () {
-      rows.forEach((row, index) => {
-        let item = {
-          word: row.word,
-          html_raw: row.html_raw,
-        };
-        const itemAfterClean = cleanData(item)
-        // console.log(`item: ${JSON.stringify(itemAfterClean)} \n\n\n`);
-        const itemQuery = `UPDATE vi_word_copy SET example = '${JSON.stringify(itemAfterClean.example)}' WHERE word LIKE "${itemAfterClean.word}"`
-        // console.log(">>>>>>: ", itemQuery)
+  db.serialize(function () {
+    rows.forEach((row) => {
+      let item = {
+        word: row.word,
+        html_raw: row.html_raw,
+      };
 
+      const itemAfterClean = cleanData(item);
+      if (!_.isEmpty(itemAfterClean.example)) {
+        const itemQuery = `UPDATE vi_word_copy SET example = '${JSON.stringify(
+          itemAfterClean.example
+        )}' WHERE word LIKE '${itemAfterClean.word.replace(/\'/g, "''")}'`;
         db.run(itemQuery, function (err) {
           if (err) {
-            console.log(">>>:     ", itemAfterClean.example);
             console.log(err);
+            console.log(">>>:     ", itemAfterClean.example);
             console.log(">>>:     ", itemQuery);
           } else {
             console.log("Success !!!");
+            console.log("---:     ", itemQuery);
           }
-        })
-      })
+        });
+      } else {
+        const itemQuery = `UPDATE vi_word_copy SET example = NULL WHERE word LIKE '${itemAfterClean.word.replace(
+          /\'/g,
+          "''"
+        )}'`;
+        db.run(itemQuery, function (err) {
+          if (err) {
+            console.log("NULL faild !!!");
 
-    })
+            console.log(err);
+            console.log(">>>:     ", itemAfterClean.example);
+            console.log(">>>:     ", itemQuery);
+          } else {
+            console.log("NULL Success !!!");
+          }
+        });
+      }
+    });
   });
+});
 
 // clearn data make them become an object
 const cleanData = (item) => {
@@ -57,12 +75,16 @@ const cleanData = (item) => {
     word: item.word,
   };
 
+  if (_.isEmpty(item.html_raw)) {
+    return data;
+  }
+
   const cleanString = striptags(`${item.html_raw}`);
   const formatString = cleanString !== "null" ? cleanString : "";
 
   // format raw data to multiple string like
   /**
-   * 
+   *
    * line 1
    * line 2
    * line 3
@@ -72,10 +94,6 @@ const cleanData = (item) => {
 
   // first line in lines is always empty
   if (lines.length === 1) {
-    data = {
-      ...data,
-      example: ""
-    };
     return data;
   }
 
@@ -83,17 +101,17 @@ const cleanData = (item) => {
   // create new object
   // with new key is "ex[i]"
   if (lines.length > 1) {
-    const ex = {}
+    const ex = {};
     for (i = 1; i < lines.length; i++) {
       if (i < lines.length - 1) {
         ex[i] = lines[i].replace(/\'/g, "''");
         data = {
           ...data,
-          example: ex
+          word: item.word,
+          example: ex,
         };
       }
     }
-
     return data;
   }
 };
