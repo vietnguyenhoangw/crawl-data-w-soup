@@ -21,6 +21,16 @@ public class Main {
 
     public static String wordInList = "";
     public static String wordFromUrl = "";
+    
+    /*
+        CRAW DATA TAG NAME
+    */
+    
+    // sound
+    public static String soundName = "source";
+    
+    // word
+    public static String exampleList = "ul.hul-u.hul-u0.ca_b.daccord_b";
 
     public static void main(String[] args) {
 
@@ -32,9 +42,13 @@ public class Main {
         for (int i = 648; i < arraylist.size(); i++) {
             String word = arraylist.get(i);
             String newUrl = url + word;
+            
+            // custom this getRawLiDataFromULTag to get data you want !!!
             String rawHtmlData = jsoupMethod.getRawLiDataFromULTag(newUrl, 
-                    arraylist.get(i), "ul.hul-u.hul-u0.ca_b.daccord_b");
-            dbHelper.insert(word, rawHtmlData);
+                    arraylist.get(i), soundName);
+            
+            System.out.println(">>>>>: " + rawHtmlData);
+//            dbHelper.insert(word, rawHtmlData);
         }
     }
 

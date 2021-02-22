@@ -16,7 +16,7 @@ import java.util.ArrayList;
 public class DBHelper {
      public Connection connect() {
         String dbName = "english-vocab-html-raw.db";
-        String url = "jdbc:sqlite:/home/vietnguyenw/NetBeansProjects/crawdata-w-jsoup/src/main/java/assets/";
+        String url = "jdbc:sqlite:/home/vietnguyenw/vietnguyenhoangw/java/CrawDataWithJsoup/crawdata-w-jsoup/src/main/java/assets/";
         
         Connection conn = null;
         try {
