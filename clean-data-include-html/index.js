@@ -1,15 +1,12 @@
 const http = require("http");
 const sqlite3 = require("sqlite3");
-const Promise = require("bluebird");
 const striptags = require("striptags");
 var _ = require("lodash");
 
 const hostname = "127.0.0.1";
 const port = 3003;
 
-const newData = [];
-const queryList = [];
-
+// connect with db
 let db = new sqlite3.Database(
   "./db/english-vocab-html-clean.db",
   sqlite3.OPEN_READWRITE,
@@ -21,19 +18,26 @@ let db = new sqlite3.Database(
   }
 );
 
+// select word and raw_html correctsponding
 db.all("SELECT word, html_raw FROM vi_word_copy", {}, (error, rows) => {
   if (error) {
     console.error(error.message);
   }
 
+  // serialize will execute the sql command from first line to ...n line
   db.serialize(function () {
+    // get the word corresponding with raw_html add to clean data method
     rows.forEach((row) => {
       let item = {
         word: row.word,
         html_raw: row.html_raw,
       };
-
+      // clean data method
+      // if raw is empty => return empty
       const itemAfterClean = cleanData(item);
+
+      // check and execute the sql command for
+      // add the new clean data to example column
       if (!_.isEmpty(itemAfterClean.example)) {
         const itemQuery = `UPDATE vi_word_copy SET example = '${JSON.stringify(
           itemAfterClean.example
@@ -41,11 +45,8 @@ db.all("SELECT word, html_raw FROM vi_word_copy", {}, (error, rows) => {
         db.run(itemQuery, function (err) {
           if (err) {
             console.log(err);
-            console.log(">>>:     ", itemAfterClean.example);
-            console.log(">>>:     ", itemQuery);
           } else {
             console.log("Success !!!");
-            console.log("---:     ", itemQuery);
           }
         });
       } else {
@@ -55,11 +56,7 @@ db.all("SELECT word, html_raw FROM vi_word_copy", {}, (error, rows) => {
         )}'`;
         db.run(itemQuery, function (err) {
           if (err) {
-            console.log("NULL faild !!!");
-
             console.log(err);
-            console.log(">>>:     ", itemAfterClean.example);
-            console.log(">>>:     ", itemQuery);
           } else {
             console.log("NULL Success !!!");
           }
@@ -119,7 +116,7 @@ const cleanData = (item) => {
 const server = http.createServer((req, res) => {
   res.statusCode = 200;
   res.setHeader("Content-Type", "text/plain");
-  res.end(newData.length.toString());
+  res.end("hello_word");
 });
 
 server.listen(port, hostname, () => {
