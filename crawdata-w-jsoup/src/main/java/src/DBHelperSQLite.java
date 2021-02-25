@@ -13,7 +13,7 @@ import java.util.ArrayList;
  *
  * @author vietnguyenw
  */
-public class DBHelper {
+public class DBHelperSQLite {
      public Connection connect() {
         String dbName = "english-vocab-html-raw.db";
         String url = "jdbc:sqlite:/home/vietnguyenw/vietnguyenhoangw/java/CrawDataWithJsoup/crawdata-w-jsoup/src/main/java/assets/";

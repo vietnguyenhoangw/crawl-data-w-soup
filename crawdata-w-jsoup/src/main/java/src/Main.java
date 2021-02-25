@@ -7,6 +7,8 @@ package src;
 
 import java.io.IOException;
 import java.util.ArrayList;
+import java.sql.*;
+
 
 /**
  *
@@ -16,8 +18,9 @@ public class Main {
 
     public static String url = "https://dictionary.cambridge.org/dictionary/english/";
 
-    public static DBHelper dbHelper;
-    public static JsoupMethod jsoupMethod;
+    public static DBHelperSQLite dbHelperSQLite = new DBHelperSQLite();
+    public static DBHelperMySQL dbHelperMySQL = new DBHelperMySQL();
+    public static JsoupMethod jsoupMethod = new JsoupMethod();
 
     public static String wordInList = "";
     public static String wordFromUrl = "";
@@ -25,19 +28,26 @@ public class Main {
     /*
         CRAW DATA TAG NAME
     */
-    
     // sound
     public static String soundName = "source";
-    
     // word
     public static String exampleList = "ul.hul-u.hul-u0.ca_b.daccord_b";
 
     public static void main(String[] args) {
-
-        dbHelper = new DBHelper();
-        jsoupMethod = new JsoupMethod();
-
-        ArrayList<String> arraylist = dbHelper.selectAll("word", "vi_word_copy");
+        Main main = new Main();
+        main.handleDataBaseSQL();
+    }
+    
+    // this using for handle sql
+    public void handleDataBaseSQL() {
+        // connect mysql
+        dbHelperMySQL.getConnection();
+    }
+    
+    // this function using for call and handle methods
+    // from jsoup method and call in main to run it.
+    public void handleCrawlData() {
+        ArrayList<String> arraylist = dbHelperSQLite.selectAll("word", "vi_word_copy");
 
         for (int i = 648; i < arraylist.size(); i++) {
             String word = arraylist.get(i);
@@ -48,7 +58,7 @@ public class Main {
                     arraylist.get(i), soundName);
             
             System.out.println(">>>>>: " + rawHtmlData);
-//            dbHelper.insert(word, rawHtmlData);
+            dbHelperSQLite.insert(word, rawHtmlData);
         }
     }
 
