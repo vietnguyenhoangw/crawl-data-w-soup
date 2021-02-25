@@ -7,6 +7,7 @@ package src;
 
 import java.sql.*;
 import java.util.ArrayList;
+import models.Word;
 
 /**
  *
@@ -30,12 +31,46 @@ public class DBHelperMySQL {
         }
         return conn;
     }
-    // return the word
-    // we can using word to find the vietnames mean or using that like a key
-    // get data by column name in table and return a list
 
-    public ArrayList<String> selectAll(String column, String table) {
+    // get all words from db
+    public ArrayList<String> getAllWord(Connection conn) {
+        try {
+            Statement stmt = conn.createStatement(ResultSet.TYPE_SCROLL_SENSITIVE,
+                    ResultSet.CONCUR_UPDATABLE);
+            ResultSet rs = stmt.executeQuery("SELECT * FROM words_vi");
+            while (rs.next()) {
+                System.out.println(">>>>> rs: " + rs.getString("aip"));
+            }
+        } catch (Exception ex) {
+            System.out.println("connect failure!");
+            ex.printStackTrace();
+        }
         return new ArrayList();
     }
 
+    // insert 'words_vi'
+    public void insertWords(Connection conn, Word word) {
+        try {
+            try {
+                String sqlCmd = "INSERT INTO words_vi( id, mean , word, level_type, topic_id, aip, how_to_use, example) VALUES ((?), (?), (?), (?), (?),(?), (?), (?))";
+                PreparedStatement ppstmt = conn.prepareStatement(sqlCmd);
+                ppstmt.setInt(1, word.getId());
+                ppstmt.setString(2, word.getMean());
+                ppstmt.setString(3, word.getWord());
+                ppstmt.setInt(4, word.getLevel_type());
+                ppstmt.setInt(5, word.getTopic_id());
+                ppstmt.setString(6, word.getAip());
+                ppstmt.setString(7, word.getHow_to_use());
+                ppstmt.setString(8, word.getExample());
+                ppstmt.execute();
+                System.out.println(word.getMean() + " >> insert words success!");
+            } catch (Exception ex) {
+                System.out.println("insert words fail!");
+                ex.printStackTrace();
+            }
+        } catch (Exception ex) {
+            System.out.println("insert words fail!");
+            ex.printStackTrace();
+        }
+    }
 }

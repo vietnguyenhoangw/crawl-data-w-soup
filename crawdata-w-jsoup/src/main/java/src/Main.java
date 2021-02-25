@@ -8,7 +8,7 @@ package src;
 import java.io.IOException;
 import java.util.ArrayList;
 import java.sql.*;
-
+import models.Word;
 
 /**
  *
@@ -24,10 +24,10 @@ public class Main {
 
     public static String wordInList = "";
     public static String wordFromUrl = "";
-    
+
     /*
         CRAW DATA TAG NAME
-    */
+     */
     // sound
     public static String soundName = "source";
     // word
@@ -37,26 +37,38 @@ public class Main {
         Main main = new Main();
         main.handleDataBaseSQL();
     }
-    
+
     // this using for handle sql
     public void handleDataBaseSQL() {
         // connect mysql
-        dbHelperMySQL.getConnection();
+        Connection conn = dbHelperMySQL.getConnection();
+
+        dbHelperMySQL.getAllWord(conn);
+
+        // get all from sqlite
+        dbHelperSQLite.connect();
+        ArrayList<Word> wordsViListData = dbHelperSQLite.selectAll("*", "vi_word");
+
+        for (int i = 0; i < wordsViListData.size(); i++) {
+            // insert data from sqlite to mysql
+            dbHelperMySQL.insertWords(conn, wordsViListData.get(i));
+
+        }
     }
-    
+
     // this function using for call and handle methods
     // from jsoup method and call in main to run it.
     public void handleCrawlData() {
-        ArrayList<String> arraylist = dbHelperSQLite.selectAll("word", "vi_word_copy");
+        ArrayList<Word> arraylist = dbHelperSQLite.selectAll("word", "vi_word_copy");
 
         for (int i = 648; i < arraylist.size(); i++) {
-            String word = arraylist.get(i);
+            String word = arraylist.get(i).getWord();
             String newUrl = url + word;
-            
+
             // custom this getRawLiDataFromULTag to get data you want !!!
-            String rawHtmlData = jsoupMethod.getRawLiDataFromULTag(newUrl, 
-                    arraylist.get(i), soundName);
-            
+            String rawHtmlData = jsoupMethod.getRawLiDataFromULTag(newUrl,
+                    arraylist.get(i).getWord(), soundName);
+
             System.out.println(">>>>>: " + rawHtmlData);
             dbHelperSQLite.insert(word, rawHtmlData);
         }
