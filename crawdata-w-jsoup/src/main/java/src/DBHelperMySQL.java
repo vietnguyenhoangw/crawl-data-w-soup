@@ -7,6 +7,8 @@ package src;
 
 import java.sql.*;
 import java.util.ArrayList;
+import models.Level;
+import models.Topic;
 import models.Word;
 
 /**
@@ -70,6 +72,46 @@ public class DBHelperMySQL {
             }
         } catch (Exception ex) {
             System.out.println("insert words fail!");
+            ex.printStackTrace();
+        }
+    }
+
+    public void insertTopics(Connection conn, Topic topic) {
+        try {
+            try {
+                String sqlCmd = "INSERT INTO topics( id, topic_name_vi , topic_name_eng) VALUES ((?), (?), (?))";
+                PreparedStatement ppstmt = conn.prepareStatement(sqlCmd);
+                ppstmt.setInt(1, topic.getId());
+                ppstmt.setString(2, topic.getTopic_name_eng());
+                ppstmt.setString(3, topic.getTopic_name_vi());
+                ppstmt.execute();
+                System.out.println(topic.getTopic_name_eng() + " >> insert topic success!");
+            } catch (Exception ex) {
+                System.out.println("insert topic fail!");
+                ex.printStackTrace();
+            }
+        } catch (Exception ex) {
+            System.out.println("insert topic fail!");
+            ex.printStackTrace();
+        }
+    }
+
+    public void insertLevel(Connection conn, Level level) {
+        try {
+            try {
+                String sqlCmd = "INSERT INTO levels( id, level_type , level_name) VALUES ((?), (?), (?))";
+                PreparedStatement ppstmt = conn.prepareStatement(sqlCmd);
+                ppstmt.setInt(1, level.getId());
+                ppstmt.setInt(2, level.getLevel_type());
+                ppstmt.setString(3, level.getLevel_name());
+                ppstmt.execute();
+                System.out.println(level.getLevel_name() + " >> insert level success!");
+            } catch (Exception ex) {
+                System.out.println("insert level fail!");
+                ex.printStackTrace();
+            }
+        } catch (Exception ex) {
+            System.out.println("insert level fail!");
             ex.printStackTrace();
         }
     }
