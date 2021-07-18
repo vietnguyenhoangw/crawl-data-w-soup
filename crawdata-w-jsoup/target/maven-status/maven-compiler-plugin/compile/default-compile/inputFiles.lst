@@ -1,2 +1,8 @@
-/home/vietnguyenw/NetBeansProjects/crawdata-w-jsoup/src/main/java/src/Main.java
-/home/vietnguyenw/NetBeansProjects/crawdata-w-jsoup/src/main/java/src/DBHelper.java
+/home/vietnguyenw/vietnguyenhoangw/java/CrawDataWithJsoup/crawdata-w-jsoup/src/main/java/src/DBKidEngSQLite.java
+/home/vietnguyenw/vietnguyenhoangw/java/CrawDataWithJsoup/crawdata-w-jsoup/src/main/java/models/Word.java
+/home/vietnguyenw/vietnguyenhoangw/java/CrawDataWithJsoup/crawdata-w-jsoup/src/main/java/src/DBHelperMySQL.java
+/home/vietnguyenw/vietnguyenhoangw/java/CrawDataWithJsoup/crawdata-w-jsoup/src/main/java/src/DBHelperSQLite.java
+/home/vietnguyenw/vietnguyenhoangw/java/CrawDataWithJsoup/crawdata-w-jsoup/src/main/java/models/Level.java
+/home/vietnguyenw/vietnguyenhoangw/java/CrawDataWithJsoup/crawdata-w-jsoup/src/main/java/src/JsoupMethod.java
+/home/vietnguyenw/vietnguyenhoangw/java/CrawDataWithJsoup/crawdata-w-jsoup/src/main/java/src/Main.java
+/home/vietnguyenw/vietnguyenhoangw/java/CrawDataWithJsoup/crawdata-w-jsoup/src/main/java/models/Topic.java

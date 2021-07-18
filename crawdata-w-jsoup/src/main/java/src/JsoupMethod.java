@@ -5,6 +5,8 @@
  */
 package src;
 
+import java.util.ArrayList;
+import java.util.List;
 import org.jsoup.Jsoup;
 import org.jsoup.nodes.Document;
 import org.jsoup.nodes.Element;
@@ -17,11 +19,9 @@ import org.jsoup.select.Elements;
 public class JsoupMethod {
 
     // get list li html in ul tag
-    
     // from url param
     // get tag name address "ul.hul-u.hul-u0.ca_b.daccord_b"
     // from word import
-    
     public String getRawLiDataFromULTag(String url, String word, String tagName) {
         String returnString = "";
         try {
@@ -49,5 +49,23 @@ public class JsoupMethod {
         }
 
         return returnString;
+    }
+
+    // get content of tag (ex: <div class="demo">Content of tag</div>)
+    // in this example the tagmane input is >>>>>> div.demo
+    public List<String> getTagContent(String url, String tagName) {
+        List<String> tagContentList = new ArrayList<String>();
+        try {
+            Document doc = Jsoup.connect(url.toString()).get();
+            Elements divs = doc.select(tagName);
+
+            for (Element item : divs) {
+                tagContentList.add(item.text());
+            }
+        } catch (Exception e) {
+            System.out.println("Error when get content of tag: " + e);
+        }
+
+        return tagContentList;
     }
 }

@@ -5,73 +5,26 @@
  */
 package src;
 
-import java.io.IOException;
-import java.util.ArrayList;
-import java.sql.*;
-import models.Level;
-import models.Topic;
-import models.Word;
+import java.util.List;
 
 /**
  *
  * @author vietnguyenw
  */
 public class Main {
-    
-    public static String url = "https://dictionary.cambridge.org/dictionary/english/";
-    
-    public static DBHelperSQLite dbHelperSQLite = new DBHelperSQLite();
-    public static DBHelperMySQL dbHelperMySQL = new DBHelperMySQL();
+
+    public static String url = "https://lingumi.com/topics/animals";
+
     public static JsoupMethod jsoupMethod = new JsoupMethod();
-    
-    public static String wordInList = "";
-    public static String wordFromUrl = "";
 
-    /*
-        CRAW DATA TAG NAME
-     */
-    // sound
-    public static String soundName = "source";
-    // word
-    public static String exampleList = "ul.hul-u.hul-u0.ca_b.daccord_b";
-    
+    public static String wordListTag = "div.soundwall_unit_text";
+
     public static void main(String[] args) {
-        Main main = new Main();
-        main.handleDataBaseSQL();
-    }
+        List<String> tagContentList = jsoupMethod.getTagContent(url, wordListTag);
 
-    // this using for handle sql
-    public void handleDataBaseSQL() {
-        // connect mysql
-        Connection conn = dbHelperMySQL.getConnection();
-        
-        // get all from sqlite
-        dbHelperSQLite.connect();
-        ArrayList<Level> levels = dbHelperSQLite.selectAllLevels();
-        
-        for (int i = 0; i < levels.size(); i++) {
-            // insert data from sqlite to mysql
-            System.out.println(">>> " + levels.get(i).getLevel_name());
-            dbHelperMySQL.insertLevel(conn, levels.get(i));
+        for (String item : tagContentList) {
+            System.out.println("item > " + item);
         }
     }
 
-    // this function using for call and handle methods
-    // from jsoup method and call in main to run it.
-    public void handleCrawlData() {
-        ArrayList<Word> arraylist = dbHelperSQLite.selectAllWords();
-        
-        for (int i = 648; i < arraylist.size(); i++) {
-            String word = arraylist.get(i).getWord();
-            String newUrl = url + word;
-
-            // custom this getRawLiDataFromULTag to get data you want !!!
-            String rawHtmlData = jsoupMethod.getRawLiDataFromULTag(newUrl,
-                    arraylist.get(i).getWord(), soundName);
-            
-            System.out.println(">>>>>: " + rawHtmlData);
-            dbHelperSQLite.insert(word, rawHtmlData);
-        }
-    }
-    
 }

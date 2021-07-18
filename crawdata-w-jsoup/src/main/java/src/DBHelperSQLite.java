@@ -130,4 +130,8 @@ public class DBHelperSQLite {
         System.out.println("insert status: " + success);
         return success;
     }
+
+    ArrayList<Word> selectAllWords() {
+        throw new UnsupportedOperationException("Not supported yet."); //To change body of generated methods, choose Tools | Templates.
+    }
 }

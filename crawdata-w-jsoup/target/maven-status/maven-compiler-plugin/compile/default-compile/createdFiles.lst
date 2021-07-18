@@ -1,2 +1,8 @@
+models/Topic.class
+src/DBHelperMySQL.class
 src/Main.class
-src/DBHelper.class
+src/DBKidEngSQLite.class
+models/Level.class
+src/DBHelperSQLite.class
+src/JsoupMethod.class
+models/Word.class
