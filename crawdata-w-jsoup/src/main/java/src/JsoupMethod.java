@@ -53,7 +53,7 @@ public class JsoupMethod {
 
     // get content of tag (ex: <div class="demo">Content of tag</div>)
     // in this example the tagmane input is >>>>>> div.demo
-    public List<String> getTagContent(String url, String tagName) {
+    public List<String> getListTagContent(String url, String tagName) {
         List<String> tagContentList = new ArrayList<String>();
         try {
             Document doc = Jsoup.connect(url.toString()).get();
@@ -67,5 +67,31 @@ public class JsoupMethod {
         }
 
         return tagContentList;
+    }
+
+    public String getSingleTagContent(String url, String tagName) {
+        String tagContent = "";
+        try {
+            Document doc = Jsoup.connect(url.toString()).get();
+            Elements divs = doc.select(tagName);
+            tagContent = divs.get(0).text();
+        } catch (Exception e) {
+            System.out.println("Error when get content of tag: " + e);
+        }
+
+        return tagContent;
+    }
+
+    public String getSrcAudio(String url) {
+        String tagContent = "";
+        try {
+            Document doc = Jsoup.connect(url.toString()).get();
+            String src = doc.select("source").first().attr("src");
+            tagContent = src;
+        } catch (Exception e) {
+            System.out.println("Error when get content of tag: " + e);
+        }
+
+        return tagContent;
     }
 }

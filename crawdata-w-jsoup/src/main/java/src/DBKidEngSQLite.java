@@ -12,6 +12,7 @@ import java.sql.ResultSet;
 import java.sql.SQLException;
 import java.sql.Statement;
 import java.util.ArrayList;
+import java.util.List;
 import models.Word;
 
 /**
@@ -33,7 +34,7 @@ public class DBKidEngSQLite {
         }
         return conn;
     }
-    
+
     public int countDataInTable(String table) {
         int numOfData = 0;
         String sql = "SELECT COUNT(*) as total FROM word";
@@ -50,8 +51,25 @@ public class DBKidEngSQLite {
         }
         return numOfData;
     }
-    
-        /**
+
+    public List<String> getSingleColumn(String colName, String table) {
+        List<String> colValue = new ArrayList<String>();
+        String sql = "SELECT " + colName + " FROM " + table;
+        try (Connection conn = this.connect();
+                Statement stmt = conn.createStatement();
+                ResultSet rs = stmt.executeQuery(sql)) {
+
+            // loop through the result set
+            while (rs.next()) {
+                colValue.add(rs.getString(colName));
+            }
+        } catch (SQLException e) {
+            System.out.println(e.getMessage());
+        }
+        return colValue;
+    }
+
+    /**
      * Insert a new row into the warehouses table
      */
     public Boolean insertWord(int id, String word, int topicId) {
@@ -72,4 +90,25 @@ public class DBKidEngSQLite {
         return success;
     }
 
+    public Boolean updateNewRowValue(
+            String rowValue, String rowWhereValue) {
+        Boolean success;
+        String sql = "UPDATE word SET speech = (?) WHERE word LIKE (?)";
+        
+        try (Connection conn = this.connect();
+                PreparedStatement pstmt = conn.prepareStatement(sql)) {
+
+            pstmt.setString(1, rowValue);
+            pstmt.setString(2, rowWhereValue);
+            
+            System.out.println("rowValue " + rowValue);
+            pstmt.executeUpdate();
+            success = true;
+        } catch (SQLException e) {
+            System.out.println(e.getMessage());
+            success = false;
+        }
+        System.out.println("insert status: " + success);
+        return success;
+    }
 }
